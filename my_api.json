@@ -1,0 +1,377 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Toys Catalog Specification",
+    "description": "Mock API",
+    "contact": {
+      "name": "Anton Zvontsov",
+      "url": "https://github.com/azvontsov",
+      "email": "azvontsov@gmail.com"
+    },
+    "version": "0.1.2"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/v1",
+      "description": "Dev server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Toy",
+      "description": "All methods about Toys"
+    }
+  ],
+  "paths": {
+    "/toys": {
+      "get": {
+        "tags": [
+          "Toy"
+        ],
+        "summary": "Index",
+        "description": "Retrieve a list of all toys stored in the database.",
+        "operationId": "getToys",
+        "responses": {
+          "200": {
+            "description": "List of toys",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Toy"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Toy"
+        ],
+        "summary": "Create",
+        "description": "Save data about a new toy in the database.",
+        "operationId": "createToy",
+        "requestBody": {
+          "content": {
+            "application/json;charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Toy"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmation of successful saving",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/Toy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incorrect input data. Returns a list of attributes with errors",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/toys/{id}": {
+      "get": {
+        "tags": [
+          "Toy"
+        ],
+        "summary": "Get by ID",
+        "description": "Retrieve data about a toy from the database by its ID.",
+        "operationId": "getToyById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Toy ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "42abcd2b-8b9c-4af9-88f7-0bc180cf74b4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Toy",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/Toy"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Toy"
+        ],
+        "summary": "Update by ID",
+        "description": "Update data about an existing toy in the database.",
+        "operationId": "updateToy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Toy ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "42abcd2b-8b9c-4af9-88f7-0bc180cf74b4"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json;charset=UTF-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Toy"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Confirmation of successful update",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/Toy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Incorrect input data. Returns a list of attributes with errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Any unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Toy"
+        ],
+        "summary": "Delete by ID",
+        "description": "Delete data about a toy from the database by its ID.",
+        "operationId": "deleteToyById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Toy ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "42abcd2b-8b9c-4af9-88f7-0bc180cf74b4"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful deletion",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/toys/status/{status}": {
+      "get": {
+        "tags": [
+          "Toy"
+        ],
+        "summary": "Get by Status",
+        "description": "Retrieve toys from the database based on their status.",
+        "operationId": "getToyByStatus",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "path",
+            "description": "Toy status",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "new",
+                "used",
+                "broken"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Toy",
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Toy"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Toy": {
+        "required": [
+          "name",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "toy_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "42abcd2b-8b9c-4af9-88f7-0bc180cf74b4"
+          },
+          "name": {
+            "type": "string",
+            "description": "Toy name",
+            "example": "Train"
+          },
+          "status": {
+            "type": "string",
+            "description": "Toy status",
+            "example": "new",
+            "enum": [
+              "new",
+              "used",
+              "broken"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "description": "Description, notes",
+            "example": "Found on a street"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Date and time the toy was saved in the catalog",
+            "example": "2022-07-01T15:00:00+01"
+          }
+        }
+      },
+      "Error": {
+        "required": [
+          "detail",
+          "errorTraceId",
+          "request",
+          "time",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Brief human-readable description of the problem",
+            "example": "Entity not found"
+          },
+          "detail": {
+            "type": "string",
+            "description": "Detailed human-readable description of the specific error",
+            "example": "Entity [Post] with id = [123456] not found. You MUST use POST to add entity instead of PUT"
+          },
+          "request": {
+            "type": "string",
+            "description": "Method and URL of the request",
+            "example": "PUT /posts/123456"
+          },
+          "time": {
+            "type": "string",
+            "description": "Time the error occurred, with millisecond precision",
+            "example": "1996-12-19T16:39:57.87-08:00"
+          },
+          "errorTraceId": {
+            "type": "string",
+            "description": "Identifier for the specific occurrence of the error",
+            "example": "ce1ff211-b5dd-4397-b8a8-3f640705efa2"
+          },
+          "errorCode": {
+            "type": "integer",
+            "description": "Error code according to the application's business logic",
+            "format": "int32",
+            "example": 57
+          },
+          "exception": {
+            "type": "string",
+            "description": "Type of error",
+            "example": "NullPointerException"
+          },
+          "stacktrace": {
+            "type": "string",
+            "description": "Stacktrace in case of an exception on the server",
+            "example": "..."
+          },
+          "causeException": {
+            "type": "string",
+            "description": "Type of the initial exception",
+            "example": "..."
+          },
+          "causeStacketrace": {
+            "type": "string",
+            "description": "Stacktrace of the initial exception"
+          }
+        }
+      }
+    }
+  }
+}
