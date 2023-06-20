@@ -1,0 +1,256 @@
+openapi: 3.0.0
+
+info:
+  title: Toys Catalog Specification
+  description: Mock API
+  version: 0.1.2
+  contact:
+    name: Anton Zvontsov
+    url: https://github.com/azvontsov
+    email: azvontsov@gmail.com
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Dev server
+
+tags:
+  - name: Toy
+    description: All methods about Toys
+
+paths:
+  /toys:
+    get:
+      summary: Index
+      description: Retrieve a list of all toys stored in the database.
+      operationId: getToys
+      tags:
+        - Toy
+      responses:
+        '200':
+          description: List of toys
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Toy'
+    post:
+      summary: Create
+      description: Save data about a new toy in the database.
+      operationId: createToy
+      tags:
+        - Toy
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/Toy'
+      responses:
+        '200':
+          description: Confirmation of successful saving
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Toy'
+        '400':
+          description: Incorrect input data. Returns a list of attributes with errors
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  type: string
+  /toys/{id}:
+    get:
+      summary: Get by ID
+      description: Retrieve data about a toy from the database by its ID.
+      operationId: getToyById
+      tags:
+        - Toy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Toy ID
+          example: 42abcd2b-8b9c-4af9-88f7-0bc180cf74b4
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Toy
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Toy'
+    put:
+      summary: Update by ID
+      description: Update data about an existing toy in the database.
+      operationId: updateToy
+      tags:
+        - Toy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Toy ID
+          example: 42abcd2b-8b9c-4af9-88f7-0bc180cf74b4
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/Toy'
+      responses:
+        '200':
+          description: Confirmation of successful update
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/Toy'
+        '400':
+          description: Incorrect input data. Returns a list of attributes with errors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '5XX':
+          description: Any unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete by ID
+      description: Delete data about a toy from the database by its ID.
+      operationId: deleteToyById
+      tags:
+        - Toy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Toy ID
+          example: 42abcd2b-8b9c-4af9-88f7-0bc180cf74b4
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful deletion
+          content: {}
+
+  /toys/status/{status}:
+    get:
+      summary: Get by Status
+      description: Retrieve toys from the database based on their status.
+      operationId: getToyByStatus
+      tags:
+        - Toy
+      parameters:
+        - name: status
+          in: path
+          required: true
+          description: Toy status
+          schema:
+            type: string
+            enum:
+              - new
+              - used
+              - broken
+      responses:
+        '200':
+          description: Toy
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Toy'
+
+components:
+  schemas:
+    Toy:
+      type: object
+      required:
+        - name
+        - status
+      properties:
+        toy_id:
+          type: string
+          format: uuid
+          example: 42abcd2b-8b9c-4af9-88f7-0bc180cf74b4
+        name:
+          description: Toy name
+          type: string
+          example: Train
+        status:
+          description: Toy status
+          type: string
+          enum:
+            - new
+            - used
+            - broken
+          example: new
+        note:
+          description: Description, notes
+          type: string
+          example: Found on a street
+        created_at:
+          description: Date and time the toy was saved in the catalog
+          type: string
+          example: 2022-07-01T15:00:00+01
+    Error:
+      type: object
+      required:
+        - title
+        - detail
+        - request
+        - time
+        - errorTraceId
+      properties:
+        title:
+          description: Brief human-readable description of the problem
+          type: string
+          example: Entity not found
+        detail:
+          description: Detailed human-readable description of the specific error
+          type: string
+          example: Entity [Post] with id = [123456] not found. You MUST use POST to add entity instead of PUT
+        request:
+          description: Method and URL of the request
+          type: string
+          example: PUT /posts/123456
+        time:
+          description: Time the error occurred, with millisecond precision
+          type: string
+          example: 1996-12-19T16:39:57.87-08:00
+        errorTraceId:
+          description: Identifier for the specific occurrence of the error
+          type: string
+          example: ce1ff211-b5dd-4397-b8a8-3f640705efa2
+        errorCode:
+          description: Error code according to the application's business logic
+          type: integer
+          format: int32
+          example: 57
+        exception:
+          description: Type of error
+          type: string
+          example: NullPointerException
+        stacktrace:
+          description: Stacktrace in case of an exception on the server
+          type: string
+          example: ...
+        causeException:
+          description: Type of the initial exception
+          type: string
+          example: ...
+        causeStacketrace:
+          description: Stacktrace of the initial exception
+          type: string
